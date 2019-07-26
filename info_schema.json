@@ -1,0 +1,483 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$version": "factorio_data_v0",
+  "definitions": {
+    "group_name": {
+      "type": "string",
+      "pattern": "^group/.+$"
+    },
+    "item_name": {
+      "type": "string",
+      "pattern": "^item/.+$"
+    },
+    "fluid_name": {
+      "type": "string",
+      "pattern": "^fluid/[^@]+$"
+    },
+    "fluid_with_temp": {
+      "type": "string",
+      "pattern": "^fluid/[^@]+@[0-9]+"
+    },
+    "recipe_name": {
+      "type": "string",
+      "pattern": "^recipe/.+$"
+    },
+    "resource_name": {
+      "type": "string",
+      "pattern": "^resource/.+$"
+    },
+    "entity_name": {
+      "type": "string",
+      "pattern": "^entity/.+$"
+    },
+    "mining_category": {
+      "type": "string",
+      "pattern": "^mining/.+$"
+    },
+    "crafting_category": {
+      "type": "string",
+      "pattern": "^crafting/.+$"
+    },
+    "tech_name": {
+      "type": "string",
+      "pattern": "^technology/.+$"
+    },
+    "category_name": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/mining_category"
+        },
+        {
+          "$ref": "#/definitions/crafting_category"
+        }
+      ]
+    },
+    "material_name": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/item_name"
+        },
+        {
+          "$ref": "#/definitions/fluid_name"
+        }
+      ]
+    },
+    "general_recipe_name": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/recipe_name"
+        },
+        {
+          "$ref": "#/definitions/resource_name"
+        }
+      ]
+    },
+    "coordinate": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "effect": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "consumption"
+        },
+        {
+          "type": "string",
+          "const": "speed"
+        },
+        {
+          "type": "string",
+          "const": "productivity"
+        },
+        {
+          "type": "string",
+          "const": "pollution"
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "order_info": {
+      "type": "object",
+      "properties": {
+        "material_group": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/group_name"
+          }
+        },
+        "recipe_group": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/group_name"
+          }
+        },
+        "material": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/definitions/group_name"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/material_name"
+              }
+            }
+          }
+        },
+        "recipe": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/definitions/group_name"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/recipe_name"
+              }
+            }
+          }
+        },
+        "resource": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resource_name"
+          }
+        },
+        "module": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item_name"
+          }
+        },
+        "machine": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/definitions/category_name"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/entity_name"
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "machine",
+        "material",
+        "material_group",
+        "module",
+        "recipe",
+        "recipe_group",
+        "resource"
+      ]
+    },
+    "free_fluids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/fluid_name"
+      }
+    },
+    "unlockable_recipes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/general_recipe_name"
+      }
+    },
+    "icon_mapping": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/definitions/group_name"
+          },
+          "additionalProperties": {
+            "$ref": "#/definitions/coordinate"
+          }
+        },
+        "small": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/coordinate"
+          },
+          "propertyNames": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/general_recipe_name"
+              },
+              {
+                "$ref": "#/definitions/material_name"
+              },
+              {
+                "$ref": "#/definitions/entity_name"
+              }
+            ]
+          }
+        },
+        "tech": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/definitions/tech_name"
+          },
+          "additionalProperties": {
+            "$ref": "#/definitions/coordinate"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "group",
+        "small",
+        "tech"
+      ]
+    },
+    "localised_names": {
+      "type": "object",
+      "propertyNames": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/general_recipe_name"
+          },
+          {
+            "$ref": "#/definitions/material_name"
+          },
+          {
+            "$ref": "#/definitions/entity_name"
+          },
+          {
+            "$ref": "#/definitions/tech_name"
+          },
+          {
+            "$ref": "#/definitions/group_name"
+          }
+        ]
+      }
+    },
+    "machine_attr": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/entity_name"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "effects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/effect"
+            }
+          },
+          "fixed": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/recipe_name"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "in": {
+            "type": "integer",
+            "minimum": -1
+          },
+          "in_fluid": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "module": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "name": {
+            "$ref": "#/definitions/entity_name"
+          },
+          "out_fluid": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "speed": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "base_prod": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "effects",
+          "fixed",
+          "in",
+          "in_fluid",
+          "module",
+          "name",
+          "out_fluid",
+          "speed",
+          "base_prod"
+        ]
+      }
+    },
+    "module_attr": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/item_name"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "effects": {
+            "type": "object",
+            "propertyNames": {
+              "$ref": "#/definitions/effect"
+            },
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "limitation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/general_recipe_name"
+            }
+          },
+          "name": {
+            "$ref": "#/definitions/item_name"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "effects",
+          "limitation",
+          "name"
+        ]
+      }
+    },
+    "temperature_attr": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/fluid_name"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minimum": 1
+        },
+        "minimum": 2
+      }
+    },
+    "recipe_attr": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/general_recipe_name"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "$ref": "#/definitions/category_name"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": [
+                  {
+                    "oneOf": [
+                      {
+                        "$ref": "#/definitions/material_name"
+                      },
+                      {
+                        "$ref": "#/definitions/resource_name"
+                      },
+                      {
+                        "$ref": "#/definitions/fluid_with_temp"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "additionalItems": false
+              }
+            }
+          },
+          "name": {
+            "$ref": "#/definitions/general_recipe_name"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": [
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/material_name"
+                    },
+                    {
+                      "$ref": "#/definitions/resource_name"
+                    },
+                    {
+                      "$ref": "#/definitions/fluid_with_temp"
+                    }
+                  ]
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "additionalItems": false
+            }
+          },
+          "time": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "ingredients",
+          "name",
+          "products",
+          "time"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "order_info",
+    "free_fluids",
+    "unlockable_recipes",
+    "icon_mapping",
+    "localised_names",
+    "machine_attr",
+    "module_attr",
+    "temperature_attr",
+    "recipe_attr"
+  ]
+}

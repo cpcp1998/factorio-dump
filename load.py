@@ -137,7 +137,7 @@ class ModManager:
                 else:
                     latest_version = "0.0.0"
                     for version in mod_versions:
-                        if Mod.version_compare(latest_version, version):
+                        if Mod.version_compare(latest_version, version) < 0:
                             latest_version = version
                     enabled_mods[mod['name']] = mod_versions[latest_version]
 
@@ -388,22 +388,23 @@ class LocaleProvider:
         values = {}
         for mod_name in self.mod_manager.mod_order:
             mod = self.mod_manager.mods[mod_name]
-            for cfg in mod.listdir('locale/'+locale):
-                if cfg.endswith('.cfg'):
-                    with mod.get_file(cfg) as f:
-                        env = ''
-                        for line in f:
-                            line = line.strip()
-                            if line.startswith('['):
-                                assert line.endswith(']')
-                                env = line[1:-1]+'.'
-                            elif '=' in line:
-                                key = line.split('=')[0]
-                                key = env + key
-                                value = '='.join(line.split('=')[1:])
-                                value = value.replace('\\n', '\n')
-                                if key not in values:
-                                    values[key] = value
+            if mod.exists('locale/'+locale+'/'):
+                for cfg in mod.listdir('locale/'+locale):
+                    if cfg.endswith('.cfg'):
+                        with mod.get_file(cfg) as f:
+                            env = ''
+                            for line in f:
+                                line = line.strip()
+                                if line.startswith('['):
+                                    assert line.endswith(']')
+                                    env = line[1:-1]+'.'
+                                elif '=' in line:
+                                    key = line.split('=')[0]
+                                    key = env + key
+                                    value = '='.join(line.split('=')[1:])
+                                    value = value.replace('\\n', '\n')
+                                    if key not in values:
+                                        values[key] = value
         return values
 
     def localise_string(self, t):

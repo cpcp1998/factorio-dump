@@ -342,6 +342,7 @@ class DataExtractor:
             products = [(k, v) for k, v in products.items()]
             products.sort(key=lambda s: order(s[0]))
             ingredients = []
+            available = True
             for ingredient in recipe.ingredients:
                 ingredient_name = ingredient.type+'/'+ingredient.name
                 if ingredient_name in temperature_attr:
@@ -350,8 +351,16 @@ class DataExtractor:
                         if len(temps) == 0 or ingredient.minimum_temperature <= temps[0] <= ingredient.maximum_temperature:
                             numbers.append(i)
                     ingredients.append([(ingredient_name+'@'+str(i), ingredient.amount) for i in numbers])
-                else:
+                    if len(numbers) == 0:
+                        available = False
+                elif not ingredient_name.startswith('fluid/') \
+                        or any(ingredient.minimum_temperature <= temp <= ingredient.maximum_temperature
+                               for temp in self.fluids[ingredient_name[6:]].available_temperatures):
                     ingredients.append([(ingredient_name, ingredient.amount)])
+                else:
+                    available = False
+            if not available:
+                continue
             ingredients.sort(key=lambda s: order(s[0][0]))
             ingredients = itertools.product(*ingredients)
             ingredients = [list(i) for i in ingredients]

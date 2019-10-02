@@ -1,0 +1,2 @@
+# To check new versions : `pur -d -r requirements.txt`
+pur==5.2.2

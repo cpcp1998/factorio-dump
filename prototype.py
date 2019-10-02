@@ -80,7 +80,11 @@ class IconLoader:
         im = Image.new('RGBA', (expected_size, expected_size), (255, 255, 255))
         im.putalpha(0)
         for p in range(len(prototype.icons)):
-            im = Image.alpha_composite(im, self.get_raw_icon(prototype.icons[p+1], expected_size))
+            try:
+                im = Image.alpha_composite(im, self.get_raw_icon(prototype.icons[p+1], expected_size))
+            except ValueError as e:
+                print("Image do not match for {name}".format(name=prototype.name))
+                pass
         return im
 
     @staticmethod

@@ -461,6 +461,8 @@ if __name__ == '__main__':
     elif operating_system == 'Darwin':
         home = str(Path.home())
         game_dir = os.path.join(home, 'Library', 'Application Support', 'Steam', 'steamapps', 'common', 'Factorio', 'factorio.app', 'Contents')
+        if not os.path.exists(game_dir):
+            game_dir = os.path.join('/', 'Applications', 'factorio.app', 'Contents')
         mods_dir = os.path.join(home, 'Library', 'Application Support', 'factorio', 'mods')
     data_extractor = DataExtractor(game_dir, mods_dir, 'normal')
     data_extractor.generate_and_dump('data')

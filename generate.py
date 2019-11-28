@@ -18,7 +18,7 @@ class DataExtractor:
 
         dataraw = self.lua_loader.get_dataraw()
         self.items = {}
-        for t in ('item', 'ammo', 'capsule', 'gun', 'module', 'tool', 'armor', 'mining-tool', 'repair-tool', 'item-with-entity-data', 'rail-planner', 'item-with-label', 'item-with-inventory', 'item-with-tags'):
+        for t in ('item', 'ammo', 'capsule', 'gun', 'module', 'tool', 'armor', 'mining-tool', 'repair-tool', 'item-with-entity-data', 'rail-planner', 'item-with-label', 'item-with-inventory', 'item-with-tags', 'deconstruction-item', 'upgrade-item', 'blueprint', 'blueprint-book'):
             for i in dataraw[t]:
                 self.items[i] = Item(dataraw[t][i], self.icon_loader)
         self.fluids = {f: Fluid(dataraw['fluid'][f], self.icon_loader) for f in dataraw['fluid']}

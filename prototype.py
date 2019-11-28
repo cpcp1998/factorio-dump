@@ -67,6 +67,11 @@ class IconLoader:
             im = im.resize((expected_size, expected_size), resample=Image.LANCZOS)
         if prototype.shift is not None:
             shift = (prototype.shift[1], prototype.shift[2])
+        elif prototype.scale is not None:
+            shift = (0, 0)
+        else:
+            shift = None
+        if shift is not None:
             shift = (int(shift[0]+(expected_size-im.width)/2), int(shift[1]+(expected_size-im.height)/2))
             empty = Image.new('RGBA', (expected_size, expected_size), (255, 255, 255))
             empty.putalpha(0)

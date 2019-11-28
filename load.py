@@ -323,6 +323,7 @@ class LuaLoader:
             self.package = self.package[2:-2]
             module = '.'.join(re.split('[./]', module)[1:])
         else:
+            module = '.'.join(re.split('[./]', module))
             if module.startswith('.'):
                 module = module[1:]
             relative_module = module if self.current_path == '' else self.current_path+'.'+module
@@ -335,11 +336,11 @@ class LuaLoader:
         self.current_path = '.'.join(module.split('.')[:-1])
         module = '/'.join(module.split('.')) + '.lua'
 
-        assert(self.mod_manager.mods[self.package].exists(module))
+        assert(self.mod_manager.mods[self.package].exists(module)), (self.package, module)
         with self.mod_manager.mods[self.package].get_file(module) as f:
             file = f.read()
 
-        eval_result = self.lua.eval('function(s) return load(s)() end')(file)
+        eval_result = self.lua.eval('function(fname, s) return load("--" .. fname .. "\\n" ..  s)() end')(module, file)
         if eval_result is None:
             eval_result = True
         self.lua.globals().package.loaded[origin_name] = eval_result

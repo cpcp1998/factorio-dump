@@ -31,7 +31,8 @@ class Mod:
                 return DirMod(path)
         if os.path.isfile(path) and path.endswith('.zip'):
             with zipfile.ZipFile(path) as f:
-                if os.path.basename(path)[:-4]+'/info.json' in f.namelist():
+                if os.path.basename(path)[:-4]+'/info.json' in f.namelist() or \
+                        "_".join(os.path.basename(path).split("_")[:-1])+'/info.json' in f.namelist():
                     return ZipMod(path)
         return None
 
@@ -71,8 +72,10 @@ class DirMod(Mod):
 class ZipMod(Mod):
     def __init__(self, path):
         assert path.endswith('.zip')
-        self.path = os.path.basename(path)[:-4] + '/'
         self.zipfile = zipfile.ZipFile(path)
+        self.path = os.path.basename(path)[:-4] + '/'
+        if self.path+"info.json" not in self.zipfile.namelist():
+            self.path = "_".join(os.path.basename(path).split("_")[:-1]) + "/"
         self._load_info()
 
     def get_file(self, file):
